@@ -160,7 +160,7 @@ df_seg['Cluster'] = clusters
 df_seg.head()
 ```
 
-## Because there are several features in each clusters which is difficult to segment churned useres into groups, one more model `Randomforest` was using on the churend dataset (label = 0) to find feature importance
+***Because there are several features in each clusters which is difficult to segment churned useres into groups, one more model `Randomforest` was using on the churend dataset (label = 0) to find feature importance***
 
 Features `CashbackAmount`,`PreferedOrderCat` was selected based on running model and features `Tenure`, `daySinceLastOrder` was also chosen because this is e-commerce business
 
