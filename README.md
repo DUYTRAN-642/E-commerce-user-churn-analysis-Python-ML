@@ -50,7 +50,21 @@ This project addresses the following questions:
 
 To come up with solutions for understanding the patterns of churned users, the following steps are performed:
 
-- **Data Exploration**: The first step is to explore the dataset to find significant patterns, correlations, and trends between user behavior and churn.
+- **Data Exploration**:
+  * The missing values part was handled by using `KNNImputer` (K-Nearest Neighbors Imputer) which has several strong advantages, especially when compared to simpler imputation methods like mean, median, or mode imputation
+```
+from sklearn.impute import KNNImputer
+mis_cols =['Tenure','WarehouseToHome','HourSpendOnApp','OrderAmountHikeFromlastYear','CouponUsed','OrderCount','DaySinceLastOrder']
+
+numerical_cols = df.select_dtypes(include=np.number).columns.tolist() # Select numerical columns
+# Ensure that mis_cols only includes numerical columns
+mis_cols = list(set(mis_cols) & set(numerical_cols))
+
+
+imputer = KNNImputer(n_neighbors=2)
+df[mis_cols] = imputer.fit_transform(df[mis_cols])
+```
+- The first step is to explore the dataset to find significant patterns, correlations, and trends between user behavior and churn.
 Users with short `Tenure` and high `Complain` rates tend to have moderate relationship with churning
 ```
 corr = num_cols.corr()
