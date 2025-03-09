@@ -51,7 +51,7 @@ This project addresses the following questions:
 To come up with solutions for understanding the patterns of churned users, the following steps are performed:
 
 - **Data Exploration**:
-  * The missing values part was handled by using `KNNImputer` (K-Nearest Neighbors Imputer) which has several strong advantages, especially when compared to simpler imputation methods like mean, median, or mode imputation
+* The missing values part was handled by using `KNNImputer` (K-Nearest Neighbors Imputer) which has several strong advantages, especially when compared to simpler imputation methods like mean, median, or mode imputation
 ```
 from sklearn.impute import KNNImputer
 mis_cols =['Tenure','WarehouseToHome','HourSpendOnApp','OrderAmountHikeFromlastYear','CouponUsed','OrderCount','DaySinceLastOrder']
@@ -64,7 +64,13 @@ mis_cols = list(set(mis_cols) & set(numerical_cols))
 imputer = KNNImputer(n_neighbors=2)
 df[mis_cols] = imputer.fit_transform(df[mis_cols])
 ```
-- The first step is to explore the dataset to find significant patterns, correlations, and trends between user behavior and churn.
+* Replace duplicates category in the features
+```
+df['PreferredLoginDevice'] = df['PreferredLoginDevice'].replace('Mobile Phone', 'Phone')
+df['PreferredPaymentMode'] = df['PreferredPaymentMode'].replace('CC', 'Credit Card')
+df['PreferredPaymentMode'] = df['PreferredPaymentMode'].replace('COD', 'Cash on Delivery')
+```
+* Explore the dataset to find significant patterns, correlations, and trends between user behavior and churn by applying `correlation`
 Users with short `Tenure` and high `Complain` rates tend to have moderate relationship with churning
 ```
 corr = num_cols.corr()
@@ -75,162 +81,115 @@ sns.heatmap(corr, annot=True, fmt=".1f", cmap='coolwarm', linewidths=.7)
 
    - Analyze others features like `SatisfactionScore`, `OrderCount`, and `OrderAmountHikeFromLastYear`, ... not have the correlation with churning
 
-#### Code to load the dataset and explore basic statistics:
-
-```python
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-
-# Load the dataset
-data = pd.read_csv("churn_predict.csv")
-
-# Show basic statistics
-print(data.describe())
-
-# Check for missing values
-print(data.isnull().sum())
-
-# Visualizing churn distribution
-sns.countplot(data['Churn'])
-plt.title('Churn Distribution')
-plt.show()
-```
-
-- **Feature Analysis**: We then analyze individual features like `SatisfactionScore`, `Complain`, `HourSpendOnApp`, `OrderAmountHikeFromLastYear`, and others that could have a strong influence on the churn flag. Correlation analysis and visualizations like pair plots can help in identifying relationships.
-
-#### Code for visualizing feature correlations:
-
-```python
-# Correlation heatmap
-corr_matrix = data.corr()
-plt.figure(figsize=(10, 8))
-sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
-plt.title("Correlation Matrix")
-plt.show()
-```
-
 ### 2. Churn Prediction Model
 
 Once the data exploration is done, we proceed to build a churn prediction model using machine learning techniques. The following steps are followed:
 
-- **Data Preprocessing**:
-   - Handle missing values if any (e.g., using imputation).
-   - Encode categorical variables (`Gender`, `PreferredLoginDevice`, etc.).
-   - Scale numerical features if required.
+- **Model Selection**: We will train model XGBoost to predict churn. We will also evaluate model performance using metrics like accuracy, precision, recall, F1-score, and ROC-AUC.
+  * Apply train_test_split
+  ```
+  from sklearn.model_selection import train_test_split
+x=df_drop.drop('Churn', axis = 1)
+y=df_drop[['Churn']]
 
-#### Code to preprocess data:
-
-```python
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-
-# Handle missing values (if any)
-data.fillna(data.mean(), inplace=True)
-
-# Encode categorical variables
-data = pd.get_dummies(data, drop_first=True)
-
-# Split data into features (X) and target (y)
-X = data.drop('Churn', axis=1)
-y = data['Churn']
-
-# Train-test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Scale numerical features
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 ```
-
-- **Model Selection**: We will train multiple models like Logistic Regression, Random Forest, and XGBoost to predict churn. We will also evaluate model performance using metrics like accuracy, precision, recall, F1-score, and ROC-AUC.
-
-#### Code to train and evaluate models:
-
-```python
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
-from sklearn.linear_model import LogisticRegression
-from xgboost import XGBClassifier
-
-# Train Random Forest model
-rf_model = RandomForestClassifier(random_state=42)
-rf_model.fit(X_train, y_train)
-
-# Predictions
-y_pred_rf = rf_model.predict(X_test)
-
-# Evaluation
-print("Random Forest Model Evaluation:")
-print(classification_report(y_test, y_pred_rf))
+* Normalize for `x_test` and `x_train` seperately to avoid data leakage
 ```
+#Normalize data
+from sklearn.preprocessing import MinMaxScaler
 
-- **Model Fine-Tuning**: Fine-tune the models using GridSearchCV to optimize hyperparameters for better performance.
+#Scale Feature:
+scaler = MinMaxScaler()
+model=scaler.fit(x_train)
+scaled_data_train = model.transform(x_train)
+scaled_data_test = model.transform(x_test)
 
-#### Code to fine-tune model using GridSearchCV:
-
-```python
-from sklearn.model_selection import GridSearchCV
-
-# Hyperparameters for Random Forest
-param_grid = {
-    'n_estimators': [50, 100, 200],
-    'max_depth': [10, 20, 30],
-    'min_samples_split': [2, 5, 10]
+# Create DataFrames 
+scaled_df_train = pd.DataFrame(scaled_data_train, columns=x_train.columns)
+scaled_df_test = pd.DataFrame(scaled_data_test, columns=x_test.columns)
+```
+* Run the model and do evaluation
+```
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
+import xgboost as xgb
+params = {
+    'objective': 'binary:logistic',  # Binary classification
+    'max_depth': 4,
+    'learning_rate': 0.1,
+    'n_estimators': 100,
+    'eval_metric': 'auc'  # Area Under ROC Curve
 }
+model = xgb.XGBClassifier(**params)
+model.fit(x_train, y_train)
 
-# GridSearchCV for Random Forest
-grid_search = GridSearchCV(estimator=rf_model, param_grid=param_grid, cv=3, scoring='accuracy')
-grid_search.fit(X_train, y_train)
-
-# Best parameters
-print("Best Parameters for Random Forest:", grid_search.best_params_)
+accuracy = accuracy_score(y_test, y_pred)
+roc_auc = roc_auc_score(y_test, y_pred_proba)
+print(f"Accuracy: {accuracy:.2f}")
+print(f"ROC-AUC Score: {roc_auc:.2f}")
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
 ```
+![image](https://github.com/user-attachments/assets/42bebb78-9976-4f0e-96a0-6e0ac8c6eb3b)
+
+==> This is a strong model overall with excellent discriminative ability (ROC-AUC 0.94) and high accuracy (0.92)
 
 ### 3. Segmentation of Churned Users
 
-Once the churn prediction model is built and fine-tuned, we proceed to segment churned users into different groups based on their behaviors. This can be done using clustering techniques such as K-Means, DBSCAN, or hierarchical clustering.
+Once the churn prediction model is built and fine-tuned, we proceed to segment churned users into different groups based on their behaviors. This can be done using clustering techniques  `K-Means`
 
-#### Code for K-Means clustering:
+* Using Business domain and Elbow Method identify the number of cluster K = 4
 
-```python
-from sklearn.cluster import KMeans
+![image](https://github.com/user-attachments/assets/5f7742f0-f9fa-4b01-b5e8-2a3fc1e3b3a6)
 
-# Use features like satisfaction score, complaint, order amount hike for clustering
-X_cluster = data[['SatisfactionScore', 'Complain', 'OrderAmountHikeFromLastYear', 'HourSpendOnApp']]
-
-# Apply K-Means clustering
-kmeans = KMeans(n_clusters=3, random_state=42)
-clusters = kmeans.fit_predict(X_cluster)
-
-# Add cluster labels to the data
-data['Cluster'] = clusters
-
-# Visualizing the clusters
-sns.scatterplot(x='SatisfactionScore', y='HourSpendOnApp', hue='Cluster', data=data, palette='Set1')
-plt.title("Churned User Segmentation")
-plt.show()
+* Code for K-Means clustering:
 ```
+kmeans = KMeans(n_clusters=4, random_state=42)
+clusters = kmeans.fit_predict(scaled_data)
+
+#Add clusters to data
+df_seg['Cluster'] = clusters
+#print(df_seg.groupby('Cluster').mean())  # Centroids
+df_seg.head()
+```
+## Because there are several features in each clusters which is difficult to segment churned useres into groups, one more model `Randomforest` was using on the churend dataset (label = 0) to find feature importance
+
+Features `CashbackAmount`,`PreferedOrderCat` was selected based on running model and features `Tenure`, `daySinceLastOrder` was also chosen because this is e-commerce business
+
+Calculate mean of each feature to specify the differences.
 
 #### Segment Analysis:
 - After clustering, analyze each cluster to determine the common characteristics of the users in each group (e.g., high-value users, frequent complainers).
 - Suggest promotions for each group based on the cluster's behavior (e.g., for "high-value" users, loyalty rewards; for "frequent complainers", support and satisfaction improvement).
+Based on KMeans Clusterring and business domain, certain number of features selected and do segmentation analysis
 
-### Requirements
+***Cluster 0 (Loyal but Inactive Users):***
 
-To run this project, you will need:
-* Python 3.x
-* Libraries: `pandas`, `numpy`, `matplotlib`, `seaborn`, `scikit-learn`, `xgboost`, `statsmodels`, `plotly` (for visualizations)
-* Jupyter Notebook (or Google Colab) to run the `.ipynb` file.
+Long tenure, highest cashback, but not very active recently.
 
-### Instructions to Run
+Diverse product preferences (others category).
 
-1. Clone this repository or download the `.ipynb` file.
-2. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Open the Jupyter notebook file in your preferred IDE or Google Colab.
-4. Run the cells sequentially to explore the data, train the model, and perform the segmentation.
+Action: Focus on re-engagement with targeted offers in niche categories.
+
+***Cluster 1 (Recent, Mobile-Focused Users):***
+
+New users with very recent purchases, moderate cashback.
+
+Strong preference for mobile products.
+
+Action: Engage with mobile-related promotions to nurture loyalty.
+
+***Cluster 2 (New, Mobile-Focused Users):***
+
+Recent users with a strong preference for mobile phones.
+
+Action: Offer tailored promotions for mobile products to retain engagement.
+
+***Cluster 3 (Diverse Interests, Moderate Activity):***
+
+Moderate tenure, decent cashback, but moderate inactivity.
+
+Diverse product preferences, leaning towards fashion and laptops.
+
+Action: Provide cross-category offers (e.g., fashion and laptops) to boost engagement.
