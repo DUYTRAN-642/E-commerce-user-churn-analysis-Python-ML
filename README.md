@@ -160,6 +160,7 @@ Features `CashbackAmount`,`PreferedOrderCat` was selected based on running model
 Calculate mean of each feature to specify the differences.
 
 #### Segment Analysis:
+
 - After clustering, analyze each cluster to determine the common characteristics of the users in each group (e.g., high-value users, frequent complainers).
 - Suggest promotions for each group based on the cluster's behavior (e.g., for "high-value" users, loyalty rewards; for "frequent complainers", support and satisfaction improvement).
 Based on KMeans Clusterring and business domain, certain number of features selected and do segmentation analysis
