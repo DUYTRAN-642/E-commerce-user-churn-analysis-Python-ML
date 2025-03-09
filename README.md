@@ -50,9 +50,16 @@ This project addresses the following questions:
 
 To come up with solutions for understanding the patterns of churned users, the following steps are performed:
 
-- **Data Exploration**: The first step is to explore the dataset to find significant patterns, correlations, and trends between user behavior and churn. For example:
-   - Users with low satisfaction scores and high complaint rates may have a higher likelihood of churning.
-   - Analyze features like `SatisfactionScore`, `Complain`, `OrderCount`, and `OrderAmountHikeFromLastYear` to see if they correlate with the churn flag.
+- **Data Exploration**: The first step is to explore the dataset to find significant patterns, correlations, and trends between user behavior and churn.
+Users with short `Tenure` and high `Complain` rates tend to have moderate relationship with churning
+```
+corr = num_cols.corr()
+sns.heatmap(corr, annot=True, fmt=".1f", cmap='coolwarm', linewidths=.7)
+```
+
+![image](https://github.com/user-attachments/assets/00187ddd-3f77-4b98-8f81-ee85f2198fdd)
+
+   - Analyze others features like `SatisfactionScore`, `OrderCount`, and `OrderAmountHikeFromLastYear`, ... not have the correlation with churning
 
 #### Code to load the dataset and explore basic statistics:
 
