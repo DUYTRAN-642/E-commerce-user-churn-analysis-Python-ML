@@ -79,14 +79,16 @@ sns.heatmap(corr, annot=True, fmt=".1f", cmap='coolwarm', linewidths=.7)
 
 ![image](https://github.com/user-attachments/assets/00187ddd-3f77-4b98-8f81-ee85f2198fdd)
 
+
    - Analyze others features like `SatisfactionScore`, `OrderCount`, and `OrderAmountHikeFromLastYear`, ... not have the correlation with churning
 
 ### 2. Churn Prediction Model
 
 Once the data exploration is done, we proceed to build a churn prediction model using machine learning techniques. The following steps are followed:
 
-- **Model Selection**: We will train model XGBoost to predict churn. We will also evaluate model performance using metrics like accuracy, precision, recall, F1-score, and ROC-AUC.
+**Model Selection**: We will train model XGBoost to predict churn. We will also evaluate model performance using metrics like accuracy, precision, recall, F1-score, and ROC-AUC.
   * Apply train_test_split
+    
   ```
   from sklearn.model_selection import train_test_split
 x=df_drop.drop('Churn', axis = 1)
