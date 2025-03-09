@@ -1,6 +1,7 @@
 # E-commerce-user-churn-analysis-Python-ML
 Predict churned users in an e-commerce platform
 Certainly! Below is a more detailed version of the `README` file, including the steps for coding, an explanation of the methodology, and some example code snippets for each part of the process. I have incorporated more context and explanation for each section of the project to help users understand how to implement the solution:
+![image](https://github.com/user-attachments/assets/efa5f9ca-50d0-4eb8-a23f-5d2b3222b262)
 
 ---
 
