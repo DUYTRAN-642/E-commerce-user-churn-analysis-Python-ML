@@ -94,21 +94,23 @@ y=df_drop[['Churn']]
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
 ```
+
 * Normalize for `x_test` and `x_train` seperately to avoid data leakage
 ```
-#Normalize data
+Normalize data
 from sklearn.preprocessing import MinMaxScaler
 
-#Scale Feature:
+Scale Feature:
 scaler = MinMaxScaler()
 model=scaler.fit(x_train)
 scaled_data_train = model.transform(x_train)
 scaled_data_test = model.transform(x_test)
 
-# Create DataFrames 
+Create DataFrames 
 scaled_df_train = pd.DataFrame(scaled_data_train, columns=x_train.columns)
 scaled_df_test = pd.DataFrame(scaled_data_test, columns=x_test.columns)
 ```
+
 * Run the model and do evaluation
 ```
 from sklearn.preprocessing import LabelEncoder
@@ -131,7 +133,9 @@ print(f"ROC-AUC Score: {roc_auc:.2f}")
 print("\nClassification Report:")
 print(classification_report(y_test, y_pred))
 ```
+
 ![image](https://github.com/user-attachments/assets/42bebb78-9976-4f0e-96a0-6e0ac8c6eb3b)
+
 
 ==> This is a strong model overall with excellent discriminative ability (ROC-AUC 0.94) and high accuracy (0.92)
 
@@ -153,6 +157,7 @@ df_seg['Cluster'] = clusters
 #print(df_seg.groupby('Cluster').mean())  # Centroids
 df_seg.head()
 ```
+
 ## Because there are several features in each clusters which is difficult to segment churned useres into groups, one more model `Randomforest` was using on the churend dataset (label = 0) to find feature importance
 
 Features `CashbackAmount`,`PreferedOrderCat` was selected based on running model and features `Tenure`, `daySinceLastOrder` was also chosen because this is e-commerce business
