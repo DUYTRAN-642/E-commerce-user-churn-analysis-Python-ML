@@ -84,7 +84,7 @@ To come up with solutions for understanding the patterns of churned users, the f
 
 => there are 6/20 columns have missing values which can cause incomplete data, lose important information, and the model's ability to generalize to unseen data could suffer. 
 
-* The missing values part was handled by using `KNNImputer` (K-Nearest Neighbors Imputer) which has several strong advantages, especially when compared to simpler imputation methods like mean, median, or mode imputation
+  * The missing values part was handled by using `KNNImputer` (K-Nearest Neighbors Imputer) which has several strong advantages, especially when compared to simpler imputation methods like mean, median, or mode imputation
 ```python
 from sklearn.impute import KNNImputer
 mis_cols =['Tenure','WarehouseToHome','HourSpendOnApp','OrderAmountHikeFromlastYear','CouponUsed','OrderCount','DaySinceLastOrder']
@@ -211,3 +211,15 @@ Based on KMeans Clusterring and business domain, certain number of features sele
 | **Cluster 1 (Recent, Mobile-Focused Users)** | New users with very recent purchases, moderate cashback. Strong preference for mobile products. | ➡️ Engage with mobile-related promotions to nurture loyalty.                                        |
 | **Cluster 2 (New, Mobile-Focused Users)** | Recent users with a strong preference for mobile phones.                         | ➡️ Offer tailored promotions for mobile products to retain engagement.                             |
 | **Cluster 3 (Diverse Interests, Moderate Activity)** | Moderate tenure, decent cashback, but moderate inactivity. Diverse product preferences, leaning towards fashion and laptops. | ➡️ Provide cross-category offers (e.g., fashion and laptops) to boost engagement.                  |
+
+## 🔎 Final Conclusion & Recommendations
+
+👉🏻 The E-commerce User Churn Analysis project provides valuable insights into user behavior within the e-commerce space using machine learning techniques. By analyzing historical user data, we successfully identified key factors contributing to user churn and developed predictive model XGBoost to forecast potential churners
+
+👉🏻 Identified 4 typical group of customers whose behaviors tend to lead to churning, which help stakeholders easy to define thos customers at the early stage and have the appropriate strategies for specific segments and finally save customer from leaving their ecommerce business.
+
+📌 Key Takeaways:
+
+✔️ The following recommendations can help businesses reduce churn rates and improve customer retention: Focus on Mobile Promotions; Cross-Category Offers; Improve Customer Experience
+
+✔️ Model Optimization: Continuously update models with new data for better predictions.
