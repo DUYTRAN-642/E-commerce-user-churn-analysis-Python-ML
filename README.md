@@ -1,18 +1,44 @@
-# E-commerce-user-churn-analysis-Python-ML
+# 📊 Project Title: Churn Prediction for E-commerce Company
 Predict churned users in an e-commerce platform
 Certainly! Below is a more detailed version of the `README` file, including the steps for coding, an explanation of the methodology, and some example code snippets for each part of the process. I have incorporated more context and explanation for each section of the project to help users understand how to implement the solution
 
 ![image](https://github.com/user-attachments/assets/efa5f9ca-50d0-4eb8-a23f-5d2b3222b262)
 
 ---
+# 📑 Table of Contents
 
-# Churn Prediction for E-commerce Company
+📌 Background & Overview
+
+📂 Dataset Description & Data Structure
+
+🔎 Final Conclusion & Recommendations
+
+## 📌 Background & Overview
 
 This project focuses on predicting churned users in an e-commerce platform in order to offer potential promotions. By analyzing customer behavior, building a machine learning model for churn prediction, and segmenting churned users into groups, we can provide targeted promotions to retain users and reduce churn.
 
-## Dataset
+This project addresses the following questions:
+1. **Churn Behavior Analysis**: What are the patterns/behaviors of churned users? Based on this analysis, what are your suggestions to the company to reduce churned users?
+2. **Churn Prediction**: Build a machine learning model to predict churned users, including fine-tuning the model for better performance.
+3. **Segmentation of Churned Users**: Based on the behaviors of churned users, segment them into different groups for targeted promotions. What are the key differences between these groups?
 
-The dataset, `churn_predict.csv`, contains various customer-related features and a churn flag indicating whether a customer has churned or not. Below is a description of the columns in the dataset:
+👤 Who is this project for?
+
+* ✔️ Marketing Teams: Understanding churn patterns can help in crafting more personalized marketing campaigns and retention offers to keep customers engaged.
+* ✔️ Product Managers: They can use churn prediction to understand what parts of the product experience might be driving users to leave and work to improve these areas.
+* ✔️ This project is for Data Analytics Teams who will build, train, and deploy the churn prediction model, as well as interpret the results for actionable business insights.
+
+## 📂 Dataset Description & Data Structure
+
+### 📌 Data Source
+
+Source: The dataset was obtained from an e-commerce company
+Size: There is one table includes over 5600 rows and 20 features about customers' information 
+Format: .xlsx
+
+### 📊 Data Structure 
+
+👉🏻 The dataset, `churn_predict.csv`, contains various customer-related features and a churn flag indicating whether a customer has churned or not. Below is a description of the columns in the dataset:
 
 | **Variable Name**          | **Description**                                         |
 |----------------------------|---------------------------------------------------------|
@@ -37,22 +63,25 @@ The dataset, `churn_predict.csv`, contains various customer-related features and
 | `DaySinceLastOrder`         | Number of days since the customer's last order          |
 | `CashbackAmount`            | Average cashback received by the customer in the last month |
 
-## Objectives
-
-This project addresses the following questions:
-1. **Churn Behavior Analysis**: What are the patterns/behaviors of churned users? Based on this analysis, what are your suggestions to the company to reduce churned users?
-2. **Churn Prediction**: Build a machine learning model to predict churned users, including fine-tuning the model for better performance.
-3. **Segmentation of Churned Users**: Based on the behaviors of churned users, segment them into different groups for targeted promotions. What are the key differences between these groups?
-
-## Approach
+## ⚒️ Main Process
 
 ### 1. Churn Behavior Analysis
 
 To come up with solutions for understanding the patterns of churned users, the following steps are performed:
 
 - **Data Exploration**:
+* Check missing values
+  ```python
+  df.info()
+  df.shape
+  ```
+
+![image](https://github.com/user-attachments/assets/3508ad69-61ec-44f5-98a3-47ab4dfacb52)
+
+=> there are 6/20 columns have missing values which can cause incomplete data, lose important information, and the model's ability to generalize to unseen data could suffer. 
+
 * The missing values part was handled by using `KNNImputer` (K-Nearest Neighbors Imputer) which has several strong advantages, especially when compared to simpler imputation methods like mean, median, or mode imputation
-```
+```python
 from sklearn.impute import KNNImputer
 mis_cols =['Tenure','WarehouseToHome','HourSpendOnApp','OrderAmountHikeFromlastYear','CouponUsed','OrderCount','DaySinceLastOrder']
 
