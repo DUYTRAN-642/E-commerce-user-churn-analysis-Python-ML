@@ -24,16 +24,20 @@ This project addresses the following questions:
 
 👤 Who is this project for?
 
-* ✔️ Marketing Teams: Understanding churn patterns can help in crafting more personalized marketing campaigns and retention offers to keep customers engaged.
-* ✔️ Product Managers: They can use churn prediction to understand what parts of the product experience might be driving users to leave and work to improve these areas.
-* ✔️ This project is for Data Analytics Teams who will build, train, and deploy the churn prediction model, as well as interpret the results for actionable business insights.
+ ✔️ Marketing Teams: Understanding churn patterns can help in crafting more personalized marketing campaigns and retention offers to keep customers engaged.
+ 
+ ✔️ Product Managers: They can use churn prediction to understand what parts of the product experience might be driving users to leave and work to improve these areas.
+ 
+ ✔️ This project is for Data Analytics Teams who will build, train, and deploy the churn prediction model, as well as interpret the results for actionable business insights.
 
 ## 📂 Dataset Description & Data Structure
 
 ### 📌 Data Source
 
 Source: The dataset was obtained from an e-commerce company
+
 Size: There is one table includes over 5600 rows and 20 features about customers' information 
+
 Format: .xlsx
 
 ### 📊 Data Structure 
@@ -70,7 +74,7 @@ Format: .xlsx
 To come up with solutions for understanding the patterns of churned users, the following steps are performed:
 
 - **Data Exploration**:
-* Check missing values
+  * Check missing values
   ```python
   df.info()
   df.shape
@@ -94,14 +98,14 @@ imputer = KNNImputer(n_neighbors=2)
 df[mis_cols] = imputer.fit_transform(df[mis_cols])
 ```
 * Replace duplicates category in the features
-```
+```python
 df['PreferredLoginDevice'] = df['PreferredLoginDevice'].replace('Mobile Phone', 'Phone')
 df['PreferredPaymentMode'] = df['PreferredPaymentMode'].replace('CC', 'Credit Card')
 df['PreferredPaymentMode'] = df['PreferredPaymentMode'].replace('COD', 'Cash on Delivery')
 ```
 * Explore the dataset to find significant patterns, correlations, and trends between user behavior and churn by applying `correlation`
 Users with short `Tenure` and high `Complain` rates tend to have moderate relationship with churning
-```
+```python
 corr = num_cols.corr()
 sns.heatmap(corr, annot=True, fmt=".1f", cmap='coolwarm', linewidths=.7)
 ```
@@ -118,7 +122,7 @@ Once the data exploration is done, we proceed to build a churn prediction model 
 **Model Selection**: We will train model XGBoost to predict churn. We will also evaluate model performance using metrics like accuracy, precision, recall, F1-score, and ROC-AUC.
   * Apply train_test_split
     
-  ```
+  ```python
   from sklearn.model_selection import train_test_split
 x=df_drop.drop('Churn', axis = 1)
 y=df_drop[['Churn']]
@@ -127,7 +131,7 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_
 ```
 
 * Normalize for `x_test` and `x_train` seperately to avoid data leakage
-```
+```python
 Normalize data
 from sklearn.preprocessing import MinMaxScaler
 
@@ -143,7 +147,7 @@ scaled_df_test = pd.DataFrame(scaled_data_test, columns=x_test.columns)
 ```
 
 * Run the model and do evaluation
-```
+```python
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import accuracy_score, classification_report, roc_auc_score
 import xgboost as xgb
@@ -179,7 +183,7 @@ Once the churn prediction model is built and fine-tuned, we proceed to segment c
 ![image](https://github.com/user-attachments/assets/5f7742f0-f9fa-4b01-b5e8-2a3fc1e3b3a6)
 
 * Code for K-Means clustering:
-```
+```python
 kmeans = KMeans(n_clusters=4, random_state=42)
 clusters = kmeans.fit_predict(scaled_data)
 
@@ -197,36 +201,13 @@ Calculate mean of each feature to specify the differences.
 
 #### Segment Analysis:
 
-- After clustering, analyze each cluster to determine the common characteristics of the users in each group (e.g., high-value users, frequent complainers).
-- Suggest promotions for each group based on the cluster's behavior (e.g., for "high-value" users, loyalty rewards; for "frequent complainers", support and satisfaction improvement).
+* After clustering, analyze each cluster to determine the common characteristics of the users in each group (e.g., high-value users, frequent complainers).
+* Suggest promotions for each group based on the cluster's behavior (e.g., for "high-value" users, loyalty rewards; for "frequent complainers", support and satisfaction improvement).
 Based on KMeans Clusterring and business domain, certain number of features selected and do segmentation analysis
 
-***Cluster 0 (Loyal but Inactive Users):***
-
-Long tenure, highest cashback, but not very active recently.
-
-Diverse product preferences (others category).
-
-Action: Focus on re-engagement with targeted offers in niche categories.
-
-***Cluster 1 (Recent, Mobile-Focused Users):***
-
-New users with very recent purchases, moderate cashback.
-
-Strong preference for mobile products.
-
-Action: Engage with mobile-related promotions to nurture loyalty.
-
-***Cluster 2 (New, Mobile-Focused Users):***
-
-Recent users with a strong preference for mobile phones.
-
-Action: Offer tailored promotions for mobile products to retain engagement.
-
-***Cluster 3 (Diverse Interests, Moderate Activity):***
-
-Moderate tenure, decent cashback, but moderate inactivity.
-
-Diverse product preferences, leaning towards fashion and laptops.
-
-Action: Provide cross-category offers (e.g., fashion and laptops) to boost engagement.
+| **Cluster**                        | **Description**                                                                 | **Action**                                                                                       |
+|------------------------------------|---------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| **Cluster 0 (Loyal but Inactive Users)** | Long tenure, highest cashback, but not very active recently. Diverse product preferences (others category). | ➡️ Focus on re-engagement with targeted offers in niche categories.                                |
+| **Cluster 1 (Recent, Mobile-Focused Users)** | New users with very recent purchases, moderate cashback. Strong preference for mobile products. | ➡️ Engage with mobile-related promotions to nurture loyalty.                                        |
+| **Cluster 2 (New, Mobile-Focused Users)** | Recent users with a strong preference for mobile phones.                         | ➡️ Offer tailored promotions for mobile products to retain engagement.                             |
+| **Cluster 3 (Diverse Interests, Moderate Activity)** | Moderate tenure, decent cashback, but moderate inactivity. Diverse product preferences, leaning towards fashion and laptops. | ➡️ Provide cross-category offers (e.g., fashion and laptops) to boost engagement.                  |
