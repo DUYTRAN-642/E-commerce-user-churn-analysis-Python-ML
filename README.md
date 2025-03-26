@@ -7,11 +7,11 @@ Certainly! Below is a more detailed version of the `README` file, including the 
 ---
 # 📑 Table of Contents
 
-📌 Background & Overview
+[📌 Background & Overview](#-background--overview)
 
-📂 Dataset Description & Data Structure
+[📂 Dataset Description & Data Structure](#-dataset-description--data-structure)
 
-🔎 Final Conclusion & Recommendations
+[🔎 Final Conclusion & Recommendations](#-final-conclusion--recommendations)
 
 ## 📌 Background & Overview
 
