@@ -34,7 +34,7 @@ This project addresses the following questions:
 
 ### 📌 Data Source
 
-Source: The dataset was obtained from an e-commerce company
+Source: The dataset was obtained from an e-commerce company | Source link: https://docs.google.com/spreadsheets/d/1U_M98PksVuLXT19dPORYsowH6a3mblQT/edit?gid=216773957#gid=216773957
 
 Size: There is one table includes over 5600 rows and 20 features about customers' information 
 
@@ -223,3 +223,5 @@ Based on KMeans Clusterring and business domain, certain number of features sele
 ✔️ The following recommendations can help businesses reduce churn rates and improve customer retention: Focus on Mobile Promotions; Cross-Category Offers; Improve Customer Experience
 
 ✔️ Model Optimization: Continuously update models with new data for better predictions.
+
+✔️ Google Colab link: https://colab.research.google.com/drive/1XOGaCOb1VHH5zpURvlgGqUyAHy5fJrxt
